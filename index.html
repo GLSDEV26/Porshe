@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon Plan Porsche — 40 000€</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --noir: #0a0a0a;
+    --rouge: #c8102e;
+    --or: #c9a84c;
+    --creme: #f5f0e8;
+    --gris: #2a2a2a;
+    --gris-clair: #888;
+    --vert: #2d7a4f;
+    --orange: #e07b39;
+  }
+
+- { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+background: var(–noir);
+color: var(–creme);
+font-family: ‘DM Mono’, monospace;
+min-height: 100vh;
+overflow-x: hidden;
+}
+
+/* HEADER */
+.header {
+text-align: center;
+padding: 60px 20px 40px;
+position: relative;
+border-bottom: 1px solid #222;
+}
+.header::before {
+content: ‘’;
+position: absolute;
+top: 0; left: 0; right: 0; bottom: 0;
+background: radial-gradient(ellipse at 50% -20%, #c8102e22 0%, transparent 70%);
+pointer-events: none;
+}
+.logo-ligne {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 16px;
+margin-bottom: 16px;
+}
+.badge {
+background: var(–rouge);
+color: white;
+font-size: 10px;
+letter-spacing: 3px;
+padding: 4px 12px;
+text-transform: uppercase;
+font-weight: 500;
+}
+h1 {
+font-family: ‘Playfair Display’, serif;
+font-size: clamp(2.5rem, 6vw, 5rem);
+font-weight: 900;
+letter-spacing: -2px;
+line-height: 1;
+color: var(–creme);
+}
+h1 span { color: var(–rouge); }
+.subtitle {
+font-size: 11px;
+letter-spacing: 4px;
+color: var(–gris-clair);
+margin-top: 12px;
+text-transform: uppercase;
+}
+.prix-badge {
+display: inline-block;
+border: 1px solid var(–or);
+color: var(–or);
+padding: 6px 20px;
+font-size: 13px;
+letter-spacing: 2px;
+margin-top: 20px;
+}
+
+/* INTRO */
+.intro {
+max-width: 720px;
+margin: 40px auto;
+padding: 0 20px;
+text-align: center;
+}
+.intro p {
+font-size: 13px;
+line-height: 2;
+color: #aaa;
+}
+.intro strong { color: var(–creme); }
+
+/* FLOWCHART */
+.flowchart {
+max-width: 900px;
+margin: 0 auto;
+padding: 20px 20px 60px;
+position: relative;
+}
+
+/* ÉTAPE */
+.etape {
+display: flex;
+gap: 0;
+margin-bottom: 4px;
+position: relative;
+opacity: 0;
+transform: translateY(20px);
+transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.etape.visible {
+opacity: 1;
+transform: translateY(0);
+}
+
+.num-col {
+width: 60px;
+flex-shrink: 0;
+display: flex;
+flex-direction: column;
+align-items: center;
+}
+.num {
+width: 44px;
+height: 44px;
+border: 2px solid var(–rouge);
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 14px;
+font-weight: 500;
+color: var(–rouge);
+flex-shrink: 0;
+background: var(–noir);
+position: relative;
+z-index: 2;
+}
+.num.done {
+background: var(–rouge);
+color: white;
+}
+.line-v {
+width: 2px;
+flex: 1;
+background: linear-gradient(to bottom, #c8102e55, #c8102e22);
+min-height: 20px;
+margin: 0 auto;
+}
+
+.carte {
+flex: 1;
+border: 1px solid #222;
+border-left: 3px solid #333;
+background: #111;
+padding: 20px 24px;
+margin-bottom: 20px;
+cursor: pointer;
+transition: border-color 0.3s, background 0.3s;
+position: relative;
+overflow: hidden;
+}
+.carte::after {
+content: ‘’;
+position: absolute;
+top: 0; left: 0; right: 0; bottom: 0;
+background: linear-gradient(135deg, transparent 70%, rgba(200,16,46,0.03) 100%);
+pointer-events: none;
+}
+.carte:hover, .carte.active {
+border-color: var(–rouge);
+background: #161616;
+}
+.carte.active { border-left-color: var(–rouge); }
+
+.carte-header {
+display: flex;
+align-items: flex-start;
+justify-content: space-between;
+gap: 12px;
+}
+.carte-titre {
+font-family: ‘Playfair Display’, serif;
+font-size: 18px;
+font-weight: 700;
+color: var(–creme);
+margin-bottom: 4px;
+}
+.carte-question {
+font-size: 11px;
+color: var(–rouge);
+letter-spacing: 2px;
+text-transform: uppercase;
+}
+.chevron {
+font-size: 18px;
+color: var(–rouge);
+transition: transform 0.3s;
+flex-shrink: 0;
+margin-top: 2px;
+}
+.carte.active .chevron { transform: rotate(90deg); }
+
+.carte-body {
+display: none;
+margin-top: 20px;
+padding-top: 20px;
+border-top: 1px solid #222;
+}
+.carte.active .carte-body { display: block; }
+
+/* BRANCHES OUI/NON */
+.branches {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 12px;
+margin-bottom: 16px;
+}
+.branche {
+padding: 14px;
+border: 1px solid #333;
+position: relative;
+}
+.branche.oui { border-color: var(–vert); }
+.branche.non { border-color: var(–orange); }
+.branche-label {
+font-size: 9px;
+letter-spacing: 3px;
+text-transform: uppercase;
+font-weight: 500;
+margin-bottom: 8px;
+}
+.branche.oui .branche-label { color: var(–vert); }
+.branche.non .branche-label { color: var(–orange); }
+.branche p { font-size: 12px; color: #ccc; line-height: 1.6; }
+
+/* CONSEILS */
+.conseils {
+background: #0d0d0d;
+border: 1px solid #1e1e1e;
+padding: 16px;
+margin-top: 14px;
+}
+.conseils-titre {
+font-size: 9px;
+letter-spacing: 3px;
+color: var(–or);
+text-transform: uppercase;
+margin-bottom: 10px;
+}
+.conseil-item {
+display: flex;
+gap: 10px;
+margin-bottom: 8px;
+font-size: 12px;
+color: #bbb;
+line-height: 1.6;
+}
+.conseil-item::before {
+content: ‘→’;
+color: var(–or);
+flex-shrink: 0;
+}
+
+/* RÈGLE FINANCE */
+.regle {
+display: flex;
+align-items: center;
+gap: 14px;
+background: #0d0d0d;
+border: 1px solid #333;
+padding: 14px 18px;
+margin-top: 14px;
+}
+.regle-num {
+font-family: ‘Playfair Display’, serif;
+font-size: 32px;
+color: var(–rouge);
+font-weight: 900;
+flex-shrink: 0;
+}
+.regle p { font-size: 12px; color: #aaa; line-height: 1.6; }
+.regle strong { color: var(–creme); }
+
+/* SIMULATEUR */
+.simulateur {
+max-width: 900px;
+margin: 0 auto 60px;
+padding: 0 20px;
+}
+.sim-titre {
+font-family: ‘Playfair Display’, serif;
+font-size: 28px;
+margin-bottom: 6px;
+}
+.sim-sous { font-size: 11px; color: var(–gris-clair); letter-spacing: 3px; margin-bottom: 30px; text-transform: uppercase; }
+
+.sim-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 16px;
+margin-bottom: 24px;
+}
+@media(max-width: 600px) { .sim-grid { grid-template-columns: 1fr; } .branches { grid-template-columns: 1fr; } }
+
+.sim-champ {
+background: #111;
+border: 1px solid #222;
+padding: 16px;
+}
+.sim-label {
+font-size: 10px;
+letter-spacing: 2px;
+color: var(–gris-clair);
+text-transform: uppercase;
+margin-bottom: 8px;
+}
+.sim-input-wrap {
+display: flex;
+align-items: center;
+gap: 8px;
+}
+.sim-devise {
+color: var(–or);
+font-size: 14px;
+flex-shrink: 0;
+}
+input[type=range] {
+-webkit-appearance: none;
+width: 100%;
+height: 2px;
+background: #333;
+outline: none;
+margin-top: 8px;
+}
+input[type=range]::-webkit-slider-thumb {
+-webkit-appearance: none;
+width: 14px;
+height: 14px;
+background: var(–rouge);
+cursor: pointer;
+border-radius: 50%;
+}
+.sim-valeur {
+font-size: 20px;
+font-weight: 500;
+color: var(–creme);
+}
+
+.verdict {
+border: 1px solid #222;
+padding: 24px;
+background: #0d0d0d;
+margin-top: 8px;
+}
+.verdict-titre {
+font-size: 10px;
+letter-spacing: 3px;
+color: var(–gris-clair);
+text-transform: uppercase;
+margin-bottom: 16px;
+}
+.verdict-ligne {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 10px 0;
+border-bottom: 1px solid #1a1a1a;
+font-size: 13px;
+color: #aaa;
+}
+.verdict-ligne:last-child { border-bottom: none; }
+.verdict-val {
+font-weight: 500;
+color: var(–creme);
+}
+.verdict-val.rouge { color: var(–rouge); }
+.verdict-val.vert { color: #4caf75; }
+.verdict-val.or { color: var(–or); }
+
+.verdict-final {
+margin-top: 20px;
+padding: 18px;
+text-align: center;
+font-family: ‘Playfair Display’, serif;
+font-size: 16px;
+letter-spacing: 0.5px;
+transition: background 0.4s;
+}
+.verdict-final.possible { background: #0d1f14; border: 1px solid var(–vert); color: #4caf75; }
+.verdict-final.attention { background: #1f160a; border: 1px solid var(–orange); color: var(–orange); }
+.verdict-final.impossible { background: #1a0a0a; border: 1px solid var(–rouge); color: var(–rouge); }
+
+/* FOOTER */
+footer {
+text-align: center;
+padding: 40px 20px;
+border-top: 1px solid #1a1a1a;
+font-size: 11px;
+color: #444;
+letter-spacing: 1px;
+}
+footer span { color: var(–rouge); }
+
+/* SEPARATEUR */
+.sep {
+display: flex;
+align-items: center;
+gap: 20px;
+max-width: 900px;
+margin: 40px auto;
+padding: 0 20px;
+}
+.sep-line { flex: 1; height: 1px; background: #1e1e1e; }
+.sep-text { font-size: 10px; letter-spacing: 4px; color: #444; text-transform: uppercase; }
+</style>
+
+</head>
+<body>
+
+<!-- HEADER -->
+
+<div class="header">
+  <div class="logo-ligne">
+    <span class="badge">Guide financier</span>
+  </div>
+  <h1>Acheter<br>ma <span>Porsche</span></h1>
+  <p class="subtitle">Plan stratégique pour salarié · 40 000€</p>
+  <div class="prix-badge">Objectif : 40 000 € · Porsche d'occasion</div>
+</div>
+
+<!-- INTRO -->
+
+<div class="intro">
+  <p>
+    Ce guide est conçu pour un <strong>salarié ordinaire</strong> — pas un héritier, pas un trader.
+    Chaque étape répond à une vraie question financière et vous donne un chemin concret.
+    Cliquez sur chaque étape pour l'explorer.
+  </p>
+</div>
+
+<!-- FLOWCHART -->
+
+<div class="flowchart">
+
+  <!-- ÉTAPE 1 -->
+
+  <div class="etape" id="e1">
+    <div class="num-col">
+      <div class="num" id="n1">01</div>
+      <div class="line-v"></div>
+    </div>
+    <div class="carte" onclick="toggle(this, 'n1')">
+      <div class="carte-header">
+        <div>
+          <div class="carte-question">Question de départ</div>
+          <div class="carte-titre">Gagnez-vous plus de 2 500€ net/mois ?</div>
+        </div>
+        <div class="chevron">›</div>
+      </div>
+      <div class="carte-body">
+        <div class="branches">
+          <div class="branche oui">
+            <div class="branche-label">✓ Oui</div>
+            <p>Bonne base. Vous pouvez envisager un crédit raisonnable. Passez à l'étape 2.</p>
+          </div>
+          <div class="branche non">
+            <div class="branche-label">✗ Non</div>
+            <p>Pas d'inquiétude. Concentrez-vous d'abord sur les étapes 2 et 3 pour augmenter votre capacité avant d'emprunter.</p>
+          </div>
+        </div>
+        <div class="regle">
+          <div class="regle-num">20%</div>
+          <p>La règle d'or : vos mensualités auto ne doivent jamais dépasser <strong>20% de vos revenus nets</strong>. Avec 2 500€/mois → max 500€/mois de crédit voiture.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉTAPE 2 -->
+
+  <div class="etape" id="e2">
+    <div class="num-col">
+      <div class="num" id="n2">02</div>
+      <div class="line-v"></div>
+    </div>
+    <div class="carte" onclick="toggle(this, 'n2')">
+      <div class="carte-header">
+        <div>
+          <div class="carte-question">Bilan patrimonial</div>
+          <div class="carte-titre">Avez-vous un fonds d'urgence (3 mois de salaire) ?</div>
+        </div>
+        <div class="chevron">›</div>
+      </div>
+      <div class="carte-body">
+        <div class="branches">
+          <div class="branche oui">
+            <div class="branche-label">✓ Oui</div>
+            <p>Parfait. Votre filet de sécurité est en place. Vous pouvez commencer à épargner pour l'apport.</p>
+          </div>
+          <div class="branche non">
+            <div class="branche-label">✗ Non</div>
+            <p>Avant tout : constituez 3 mois de salaire en épargne de précaution sur un Livret A. La Porsche attendra 6 à 12 mois.</p>
+          </div>
+        </div>
+        <div class="conseils">
+          <div class="conseils-titre">Pourquoi c'est essentiel</div>
+          <div class="conseil-item">Sans fonds d'urgence, une réparation inattendue vous force à revendre la Porsche à perte.</div>
+          <div class="conseil-item">Les Porsche d'occasion peuvent coûter 2 000–4 000€/an en entretien. Anticipez-le.</div>
+          <div class="conseil-item">Cible : 7 500€ à 8 000€ de réserve si votre salaire est autour de 2 500–2 700€/mois.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉTAPE 3 -->
+
+  <div class="etape" id="e3">
+    <div class="num-col">
+      <div class="num" id="n3">03</div>
+      <div class="line-v"></div>
+    </div>
+    <div class="carte" onclick="toggle(this, 'n3')">
+      <div class="carte-header">
+        <div>
+          <div class="carte-question">Apport personnel</div>
+          <div class="carte-titre">Avez-vous 8 000€ à 10 000€ d'apport ?</div>
+        </div>
+        <div class="chevron">›</div>
+      </div>
+      <div class="carte-body">
+        <div class="branches">
+          <div class="branche oui">
+            <div class="branche-label">✓ Oui</div>
+            <p>Excellent ! Un apport de 20–25% réduit vos mensualités et améliore vos chances d'obtenir un bon taux.</p>
+          </div>
+          <div class="branche non">
+            <div class="branche-label">✗ Non</div>
+            <p>Plan d'épargne : 500€/mois → 8 000€ en 16 mois. Utilisez le simulateur ci-dessous pour trouver votre rythme.</p>
+          </div>
+        </div>
+        <div class="conseils">
+          <div class="conseils-titre">Stratégies d'épargne rapide</div>
+          <div class="conseil-item">Livret A (3%) + LEP si éligible (5%) : sans risque, liquid.</div>
+          <div class="conseil-item">Revoir ses abonnements : streaming, salle de sport, assurances → souvent 150–300€/mois récupérables.</div>
+          <div class="conseil-item">Vendre des objets inutilisés : électronique, vêtements, meubles → 500 à 2 000€ réalistes.</div>
+          <div class="conseil-item">Évitez les placements risqués crypto/actions pour un objectif à court terme.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉTAPE 4 -->
+
+  <div class="etape" id="e4">
+    <div class="num-col">
+      <div class="num" id="n4">04</div>
+      <div class="line-v"></div>
+    </div>
+    <div class="carte" onclick="toggle(this, 'n4')">
+      <div class="carte-header">
+        <div>
+          <div class="carte-question">Le crédit</div>
+          <div class="carte-titre">Votre dossier bancaire est-il sain ?</div>
+        </div>
+        <div class="chevron">›</div>
+      </div>
+      <div class="carte-body">
+        <div class="branches">
+          <div class="branche oui">
+            <div class="branche-label">✓ Oui</div>
+            <p>CDI ou revenus stables, pas d'incident bancaire, taux d'endettement &lt;33% → Allez négocier votre crédit.</p>
+          </div>
+          <div class="branche non">
+            <div class="branche-label">✗ Non</div>
+            <p>Régularisez d'abord : soldez les petits crédits à la conso, évitez les découverts 6 mois avant la demande.</p>
+          </div>
+        </div>
+        <div class="regle">
+          <div class="regle-num">33%</div>
+          <p>Taux d'endettement maximum accepté par les banques. <strong>Exemple :</strong> 2 800€ net → max 924€/mois tous crédits confondus (loyer inclus).</p>
+        </div>
+        <div class="conseils">
+          <div class="conseils-titre">Astuce crédit auto</div>
+          <div class="conseil-item">Comparez sur 48 et 60 mois : 60 mois réduit la mensualité mais coûte plus en intérêts.</div>
+          <div class="conseil-item">Négociez avec votre banque ET un courtier (comme Meilleurtaux.com) pour obtenir le meilleur taux.</div>
+          <div class="conseil-item">Exemple : 30 000€ sur 60 mois à 5,5% → ~574€/mois. Sur 48 mois → ~697€/mois.</div>
+          <div class="conseil-item">LOA (leasing) : option si vous voulez garder la voiture 3–4 ans avec option d'achat.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉTAPE 5 -->
+
+  <div class="etape" id="e5">
+    <div class="num-col">
+      <div class="num" id="n5">05</div>
+      <div class="line-v"></div>
+    </div>
+    <div class="carte" onclick="toggle(this, 'n5')">
+      <div class="carte-header">
+        <div>
+          <div class="carte-question">Coûts cachés</div>
+          <div class="carte-titre">Avez-vous budgété TOUS les coûts d'une Porsche ?</div>
+        </div>
+        <div class="chevron">›</div>
+      </div>
+      <div class="carte-body">
+        <div class="branches">
+          <div class="branche oui">
+            <div class="branche-label">✓ Oui</div>
+            <p>Bravo — beaucoup échouent ici. Vous êtes prêt à acheter intelligemment.</p>
+          </div>
+          <div class="branche non">
+            <div class="branche-label">✗ Non</div>
+            <p>Attention : les coûts annexes représentent souvent 30–40% du prix d'achat sur 5 ans. Lisez la suite.</p>
+          </div>
+        </div>
+        <div class="conseils">
+          <div class="conseils-titre">Budget réel d'une Porsche à 40 000€ / an</div>
+          <div class="conseil-item"><strong style="color:var(--creme)">Assurance :</strong> 1 200–2 400€/an selon profil (préférez une assurance tous risques).</div>
+          <div class="conseil-item"><strong style="color:var(--creme)">Entretien :</strong> 1 500–3 500€/an (révisions, pneumatiques, freins — pneus sport coûteux).</div>
+          <div class="conseil-item"><strong style="color:var(--creme)">Carburant :</strong> Moteur 2.0 ou 3.0 → 10–13L/100km → ~200–300€/mois.</div>
+          <div class="conseil-item"><strong style="color:var(--creme)">Carte grise :</strong> Variable par région, ~400–900€ pour une Porsche.</div>
+          <div class="conseil-item"><strong style="color:var(--creme)">Dépréciation :</strong> ~8–12% par an sur une occasion. Les Porsche conservent bien leur valeur.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉTAPE 6 -->
+
+  <div class="etape" id="e6">
+    <div class="num-col">
+      <div class="num" id="n6">06</div>
+      <div class="line-v"></div>
+    </div>
+    <div class="carte" onclick="toggle(this, 'n6')">
+      <div class="carte-header">
+        <div>
+          <div class="carte-question">Le bon modèle</div>
+          <div class="carte-titre">Quelle Porsche à 40 000€ ?</div>
+        </div>
+        <div class="chevron">›</div>
+      </div>
+      <div class="carte-body">
+        <div class="conseils">
+          <div class="conseils-titre">Modèles recommandés à ~40 000€ (occasion)</div>
+          <div class="conseil-item"><strong style="color:var(--creme)">Porsche Macan (2018–2020) :</strong> SUV polyvalent, entretien accessible, idéal usage quotidien. ★★★★☆</div>
+          <div class="conseil-item"><strong style="color:var(--creme)">Porsche 718 Boxster (2016–2018) :</strong> Roadster sportif, moteur 4 cylindres fiable. Très fun. ★★★★☆</div>
+          <div class="conseil-item"><strong style="color:var(--creme)">Porsche Cayenne (2014–2016) :</strong> Grand SUV, famille, puissant, mais entretien plus coûteux. ★★★☆☆</div>
+          <div class="conseil-item"><strong style="color:var(--creme)">Porsche 911 (991, 2011–2014) :</strong> Icône. Budget serré mais possible. Vérifiez l'historique entretien. ★★★☆☆</div>
+          <div class="conseil-item">Privilégiez toujours : historique complet, kilométrage &lt;80 000 km, révisions chez Porsche Center.</div>
+        </div>
+        <div class="regle">
+          <div class="regle-num">⚠</div>
+          <p>Exigez toujours un <strong>rapport CarVertical ou Histovec</strong> + inspection pré-achat par un mécanicien indépendant (~150€). Ce contrôle peut vous éviter des milliers d'euros de surprise.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉTAPE 7 -->
+
+  <div class="etape" id="e7">
+    <div class="num-col">
+      <div class="num" id="n7">07</div>
+    </div>
+    <div class="carte" onclick="toggle(this, 'n7')">
+      <div class="carte-header">
+        <div>
+          <div class="carte-question">Objectif atteint</div>
+          <div class="carte-titre">Vous avez votre Porsche. Et après ?</div>
+        </div>
+        <div class="chevron">›</div>
+      </div>
+      <div class="carte-body">
+        <div class="conseils">
+          <div class="conseils-titre">Préserver votre équilibre financier</div>
+          <div class="conseil-item">Maintenez un fonds d'urgence dédié voiture de 2 000–3 000€ intouchable.</div>
+          <div class="conseil-item">Souscrivez une garantie mécanique complémentaire lors de l'achat (~500–800€/an).</div>
+          <div class="conseil-item">Rejoignez un club Porsche : économies sur l'entretien groupé, bons plans pneus.</div>
+          <div class="conseil-item">Revendez au bon moment : 5–7 ans / 100 000 km est souvent le meilleur point de revente.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SEPARATEUR -->
+
+<div class="sep">
+  <div class="sep-line"></div>
+  <div class="sep-text">Simulateur</div>
+  <div class="sep-line"></div>
+</div>
+
+<!-- SIMULATEUR -->
+
+<div class="simulateur">
+  <div class="sim-titre">Mon Plan Personnalisé</div>
+  <div class="sim-sous">Calculez votre capacité réelle</div>
+
+  <div class="sim-grid">
+    <div class="sim-champ">
+      <div class="sim-label">Revenu net mensuel</div>
+      <div class="sim-input-wrap">
+        <span class="sim-devise">€</span>
+        <span class="sim-valeur" id="v-revenu">2 500</span>
+      </div>
+      <input type="range" min="1500" max="6000" step="100" value="2500" oninput="calcul()" id="r-revenu">
+    </div>
+
+```
+<div class="sim-champ">
+  <div class="sim-label">Loyer / charges mensuelles</div>
+  <div class="sim-input-wrap">
+    <span class="sim-devise">€</span>
+    <span class="sim-valeur" id="v-charges">800</span>
+  </div>
+  <input type="range" min="0" max="2500" step="50" value="800" oninput="calcul()" id="r-charges">
+</div>
+
+<div class="sim-champ">
+  <div class="sim-label">Apport disponible</div>
+  <div class="sim-input-wrap">
+    <span class="sim-devise">€</span>
+    <span class="sim-valeur" id="v-apport">8 000</span>
+  </div>
+  <input type="range" min="0" max="20000" step="500" value="8000" oninput="calcul()" id="r-apport">
+</div>
+
+<div class="sim-champ">
+  <div class="sim-label">Durée du crédit</div>
+  <div class="sim-input-wrap">
+    <span class="sim-valeur" id="v-duree">60</span>
+    <span style="color:var(--gris-clair);font-size:12px">mois</span>
+  </div>
+  <input type="range" min="24" max="84" step="12" value="60" oninput="calcul()" id="r-duree">
+</div>
+```
+
+  </div>
+
+  <div class="verdict">
+    <div class="verdict-titre">Analyse de votre situation</div>
+    <div class="verdict-ligne">
+      <span>Montant à financer</span>
+      <span class="verdict-val or" id="r-montant">–</span>
+    </div>
+    <div class="verdict-ligne">
+      <span>Mensualité crédit estimée (taux ~5,5%)</span>
+      <span class="verdict-val" id="r-mensualite">–</span>
+    </div>
+    <div class="verdict-ligne">
+      <span>Budget auto total (crédit + coûts)</span>
+      <span class="verdict-val rouge" id="r-total">–</span>
+    </div>
+    <div class="verdict-ligne">
+      <span>Reste à vivre après tout</span>
+      <span class="verdict-val vert" id="r-reste">–</span>
+    </div>
+    <div class="verdict-ligne">
+      <span>Taux d'endettement global</span>
+      <span class="verdict-val" id="r-taux">–</span>
+    </div>
+    <div class="verdict-final" id="verdict-final">—</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+
+<footer>
+  <p>Guide créé pour un usage personnel · Simulateur basé sur un taux indicatif de 5,5%</p>
+  <p style="margin-top:8px">La <span>Porsche</span> n'est pas un rêve inaccessible — c'est une question de méthode.</p>
+</footer>
+
+<script>
+  // TOGGLE CARTES
+  function toggle(el, numId) {
+    el.classList.toggle('active');
+    const num = document.getElementById(numId);
+    if (el.classList.contains('active')) {
+      num.classList.add('done');
+      num.textContent = '✓';
+    } else {
+      num.classList.remove('done');
+      num.textContent = numId.replace('n','0');
+    }
+  }
+
+  // ANIMATION SCROLL
+  const etapes = document.querySelectorAll('.etape');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1 });
+  etapes.forEach(e => obs.observe(e));
+
+  // SIMULATEUR
+  function fmt(n) {
+    return n.toLocaleString('fr-FR', { minimumFractionDigits: 0 }) + ' €';
+  }
+
+  function calcul() {
+    const revenu = +document.getElementById('r-revenu').value;
+    const charges = +document.getElementById('r-charges').value;
+    const apport = +document.getElementById('r-apport').value;
+    const duree = +document.getElementById('r-duree').value;
+
+    document.getElementById('v-revenu').textContent = revenu.toLocaleString('fr-FR');
+    document.getElementById('v-charges').textContent = charges.toLocaleString('fr-FR');
+    document.getElementById('v-apport').textContent = apport.toLocaleString('fr-FR');
+    document.getElementById('v-duree').textContent = duree;
+
+    const prix = 40000;
+    const montant = prix - apport;
+    const taux = 0.055 / 12;
+    const mensualite = montant > 0
+      ? Math.round(montant * taux / (1 - Math.pow(1 + taux, -duree)))
+      : 0;
+    const coutsAnnuels = 200; // assurance + entretien moyen / mois
+    const totalAuto = mensualite + coutsAnnuels;
+    const reste = revenu - charges - totalAuto;
+    const endettement = Math.round(((charges + mensualite) / revenu) * 100);
+
+    document.getElementById('r-montant').textContent = fmt(montant);
+    document.getElementById('r-mensualite').textContent = fmt(mensualite) + '/mois';
+    document.getElementById('r-total').textContent = fmt(totalAuto) + '/mois';
+    document.getElementById('r-reste').textContent = fmt(reste) + '/mois';
+
+    const tauxEl = document.getElementById('r-taux');
+    tauxEl.textContent = endettement + '%';
+    tauxEl.className = 'verdict-val ' + (endettement < 33 ? 'vert' : 'rouge');
+
+    const vf = document.getElementById('verdict-final');
+    if (montant <= 0) {
+      vf.textContent = '🏆 Achat comptant possible — félicitations !';
+      vf.className = 'verdict-final possible';
+    } else if (endettement <= 33 && reste > 800) {
+      vf.textContent = '✓ Votre profil est finançable. Lancez vos démarches bancaires.';
+      vf.className = 'verdict-final possible';
+    } else if (endettement <= 40 && reste > 500) {
+      vf.textContent = '⚠ Faisable mais serré. Augmentez votre apport ou allongez la durée.';
+      vf.className = 'verdict-final attention';
+    } else {
+      vf.textContent = '✗ Trop risqué actuellement. Épargnez encore 6 à 12 mois avant de vous lancer.';
+      vf.className = 'verdict-final impossible';
+    }
+  }
+
+  calcul(); // init
+</script>
+
+</body>
+</html>
