@@ -1,4 +1,4 @@
-const CACHE = 'macan-v1';
+const CACHE = 'macan-v2';
 const ASSETS = [
   './',
   './index.html',
